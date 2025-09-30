@@ -56,7 +56,7 @@ public:
     /**
      *  @brief Default destructor.
      */
-    virtual ~TaskThread() noexcept;
+    virtual ~TaskThread() noexcept = default;
 
 private:
 
@@ -155,7 +155,7 @@ private:
     struct Storage;
 
     //**************************************************************************
-    // Data
+    // Variables
     //**************************************************************************
 
     std::shared_ptr<Storage> m_pStorage;
@@ -211,12 +211,6 @@ public:
             rTaskThread.SetFinished();
         }
     }))
-    {}
-    
-    /**
-     *  @brief Default destructor.
-     */
-    virtual ~Task() noexcept
     {}
     
     //**************************************************************************
@@ -357,7 +351,7 @@ public:
 private:
  
     //**************************************************************************
-    // Data
+    // Variables
     //**************************************************************************
 
     std::shared_ptr<TaskThread> m_pTaskThread;

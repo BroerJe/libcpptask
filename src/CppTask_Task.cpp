@@ -56,9 +56,6 @@ TaskThread::TaskThread(const std::function<void(TaskThread& rTaskThread)>& c_rFu
     m_pStorage->m_pResult = nullptr;
 }
 
-TaskThread::~TaskThread() noexcept
-{}
-
 //******************************************************************************
 // Run
 //******************************************************************************
