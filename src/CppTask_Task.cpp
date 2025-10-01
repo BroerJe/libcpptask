@@ -45,7 +45,7 @@ struct TaskThread::Storage
 };
 
 //******************************************************************************
-// Constructor / Destructor
+// Constructor
 //******************************************************************************
 
 TaskThread::TaskThread(const std::function<void(TaskThread& rTaskThread)>& c_rFunction)
