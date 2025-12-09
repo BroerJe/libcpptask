@@ -384,6 +384,8 @@ TEST(Task, RunAsync_RunFromTwoSeparateThreads_OnlyRunsTaskOnce)
             secondThread.join();
         }
 
+        task.Await();
+
         ASSERT_EQ(runCount, 1);
     }
     catch (const std::exception& e)
