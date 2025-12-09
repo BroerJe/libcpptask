@@ -374,12 +374,12 @@ TEST(Task, RunAsync_RunFromTwoSeparateThreads_OnlyRunsTaskOnce)
             condition.notify_all();
         }
         
-        if (firstThread.joinable() == true)
+        if (firstThread.joinable())
         {
             firstThread.join();
         }
 
-        if (secondThread.joinable() == true)
+        if (secondThread.joinable())
         {
             secondThread.join();
         }
@@ -568,7 +568,7 @@ TEST(Task, GetResult_Run_ReturnsLambdaPointerResult)
 
         EXPECT_NE(pResult, nullptr);
 
-        if (pResult != nullptr)
+        if (pResult)
         {
             EXPECT_EQ(*pResult, 32);
             delete pResult;
@@ -594,7 +594,7 @@ TEST(Task, GetResult_RunAsync_ReturnsLambdaPointerResult)
 
         EXPECT_NE(pResult, nullptr);
 
-        if (pResult != nullptr)
+        if (pResult)
         {
             EXPECT_EQ(*pResult, 32);
             delete pResult;
@@ -733,7 +733,7 @@ TEST(Task, AwaitResult_RunAsync_ReturnsLambdaPointerResult)
 
         EXPECT_NE(pResult, nullptr);
 
-        if (pResult != nullptr)
+        if (pResult)
         {
             EXPECT_EQ(*pResult, 32);
             delete pResult;
@@ -758,7 +758,7 @@ TEST(Task, AwaitResult_Run_ReturnsLambdaPointerResult)
 
         EXPECT_NE(pResult, nullptr);
 
-        if (pResult != nullptr)
+        if (pResult)
         {
             EXPECT_EQ(*pResult, 32);
             delete pResult;
@@ -917,20 +917,18 @@ TEST(Task, GetResult_CalledTwice_ReturnsSameLambdaPointerResult)
 
         EXPECT_EQ(pFirstResult, pSecondResult);
 
-        if (pFirstResult != nullptr)
+        if (pFirstResult)
         {
             EXPECT_EQ(*pFirstResult, 32);
         }
 
-        if (pSecondResult != nullptr)
+        if (pSecondResult)
         {
             EXPECT_EQ(*pSecondResult, 32);
         }
 
-        if (pFirstResult != nullptr)
-        {
-            delete pFirstResult;
-        }
+        delete pFirstResult;
+        // pFirstResult is pSecondResult!
     }
     catch (const std::exception& e)
     {
@@ -955,20 +953,18 @@ TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaPointerResult)
 
         EXPECT_EQ(pFirstResult, pSecondResult);
 
-        if (pFirstResult != nullptr)
+        if (pFirstResult)
         {
             EXPECT_EQ(*pFirstResult, 32);
         }
 
-        if (pSecondResult != nullptr)
+        if (pSecondResult)
         {
             EXPECT_EQ(*pSecondResult, 32);
         }
 
-        if (pFirstResult != nullptr)
-        {
-            delete pFirstResult;
-        }
+        delete pFirstResult;
+        // pFirstResult is pSecondResult!
     }
     catch (const std::exception& e)
     {

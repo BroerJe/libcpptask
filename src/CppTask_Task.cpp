@@ -130,7 +130,7 @@ TaskThread::Await()
 void
 TaskThread::SetResult(const void* c_pPtr, size_t size)
 {
-    if (c_pPtr == nullptr || size == 0)
+    if (!c_pPtr || size == 0)
     {
         throw Exception("Invalid parameters!");
     }
@@ -144,14 +144,14 @@ TaskThread::SetResult(const void* c_pPtr, size_t size)
 void
 TaskThread::GetResult(void* pPtr, size_t size)
 {
-    if (pPtr == nullptr || size == 0)
+    if (!pPtr || size == 0)
     {
         throw Exception("Invalid parameters!");
     }
 
     std::lock_guard<std::mutex> lockGuard(m_pStorage->m_mutex);
 
-    if (m_pStorage->m_pResult == nullptr)
+    if (!m_pStorage->m_pResult)
     {
         throw Exception("No result available to return!");
     }

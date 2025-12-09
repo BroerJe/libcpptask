@@ -57,7 +57,7 @@ public:
      *  @param c_pMessage The error message.
      */
     Exception(const char* c_pMessage) 
-    : m_message(c_pMessage != nullptr ? c_pMessage : "")
+    : m_message(c_pMessage ? c_pMessage : "")
     {}
     
     //**************************************************************************

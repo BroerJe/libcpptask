@@ -76,7 +76,7 @@ ThreadPool::~ThreadPool() noexcept
 
     for (auto& rThread : m_threads)
     {
-        if (rThread.joinable() == true)
+        if (rThread.joinable())
         {
             rThread.join();
         }
@@ -101,14 +101,14 @@ ThreadPool::Singleton()
 void
 ThreadPool::Enqueue(std::shared_ptr<TaskThread> pTaskThread)
 {
-    if (pTaskThread == nullptr)
+    if (!pTaskThread)
     {
         throw Exception("Invalid parameters!");
     }
 
     std::lock_guard<std::mutex> lockGuard(m_mutex);
 
-    if (m_runThreads == false)
+    if (!m_runThreads)
     {
         throw Exception("Thread pool is stopped!");
     }
@@ -131,16 +131,16 @@ ThreadPool::RunThread(ThreadPool* pInstance) noexcept
         {
             std::unique_lock<std::mutex> uniqueLock(pInstance->m_mutex);
 
-            if (pInstance->m_taskThreads.empty() == true)
+            if (pInstance->m_taskThreads.empty())
             {
                 pInstance->m_condition.wait(uniqueLock);
             }
 
-            if (pInstance->m_runThreads == false)
+            if (!pInstance->m_runThreads)
             {
                 break;
             }
-            else if (pInstance->m_taskThreads.empty() == true)
+            else if (pInstance->m_taskThreads.empty())
             {
                 continue;
             }
