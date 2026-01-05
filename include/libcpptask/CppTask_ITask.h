@@ -92,7 +92,7 @@ public:
      *  @brief Wait for a task to finished. This function is thread-safe.
      */
     virtual void
-    Await() = 0;
+    Await() const = 0;
 
     /**
      *  @brief Get the result of a finished task. This function is thread-safe.
@@ -100,7 +100,7 @@ public:
      *  @returns The task result.
      */
     virtual T
-    GetResult() = 0;
+    GetResult() const = 0;
 
     /**
      *  @brief Wait for a task to finish and return the task result. This 
@@ -111,7 +111,7 @@ public:
      *  @returns The task result.
      */
     virtual T
-    AwaitResult() = 0;
+    AwaitResult() const = 0;
 
     //**************************************************************************
     // State
@@ -123,7 +123,7 @@ public:
      *  @returns The current task state.
      */
     virtual TaskState
-    GetState() = 0;
+    GetState() const = 0;
 
 protected:
 

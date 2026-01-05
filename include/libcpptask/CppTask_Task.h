@@ -107,7 +107,7 @@ private:
      *         thread-safe.
      */
     void
-    Await();
+    Await() const;
         
     //**************************************************************************
     // Result
@@ -130,7 +130,7 @@ private:
      *  @param size The size available to write to.
      */
     void
-    GetResult(void* pPtr, size_t size);
+    GetResult(void* pPtr, size_t size) const;
 
     //**************************************************************************
     // State
@@ -142,7 +142,7 @@ private:
      *  @returns The current task thread state.
      */
     TaskState
-    GetState();
+    GetState() const;
 
     //**************************************************************************
     // Storage
@@ -290,7 +290,7 @@ public:
      *  @brief Wait for a task to finished. This function is thread-safe.
      */
     void
-    Await() override
+    Await() const override
     {
         m_pTaskThread->Await();
     }
@@ -301,7 +301,7 @@ public:
      *  @returns The task result.
      */
     T
-    GetResult() override
+    GetResult() const override
     {
         if constexpr (!std::is_same_v<T, void>)
         {
@@ -323,7 +323,7 @@ public:
      *  @returns The task result.
      */
     T
-    AwaitResult() override
+    AwaitResult() const override
     {
         Await();
 
@@ -343,7 +343,7 @@ public:
      *  @returns The current task state.
      */
     TaskState
-    GetState() override
+    GetState() const override
     {
         return m_pTaskThread->GetState();
     }

@@ -36,8 +36,8 @@ namespace CppTask {
 
 struct TaskThread::Storage
 {
-    std::mutex m_mutex;
-    std::condition_variable m_condition;
+    mutable std::mutex m_mutex;
+    mutable std::condition_variable m_condition;
 
     std::function<void(TaskThread& rTaskThread)> m_function;
     TaskState m_state;
@@ -113,7 +113,7 @@ TaskThread::SetFinished()
 }
 
 void
-TaskThread::Await()
+TaskThread::Await() const
 {
     std::unique_lock<std::mutex> uniqueLock(m_pStorage->m_mutex);
 
@@ -142,7 +142,7 @@ TaskThread::SetResult(const void* c_pPtr, size_t size)
 }
 
 void
-TaskThread::GetResult(void* pPtr, size_t size)
+TaskThread::GetResult(void* pPtr, size_t size) const
 {
     if (!pPtr || size == 0)
     {
@@ -164,7 +164,7 @@ TaskThread::GetResult(void* pPtr, size_t size)
 //******************************************************************************
 
 TaskState
-TaskThread::GetState()
+TaskThread::GetState() const
 {
     std::lock_guard<std::mutex> lockGuard(m_pStorage->m_mutex);
     return m_pStorage->m_state;

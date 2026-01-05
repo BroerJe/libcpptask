@@ -29,6 +29,12 @@
 #include "../../include/libcpptask/CppTask_Task.h"
 
 
+/**
+ *  @TODO: A lot of these tests are timer-based, which makes them less robust.
+ *         Swap with helpers and similar.
+ */
+
+
 //******************************************************************************
 // Helpers
 //******************************************************************************
@@ -986,6 +992,106 @@ TEST(Task, GetResult_NotRunFunctionWithResult_Throws)
         });
 
         ASSERT_ANY_THROW(task.GetResult());
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
+TEST(Task, Await_IsConstTask_Callable)
+{
+    try
+    {
+        CppTask::Task<void> task([](){
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        });
+
+        auto useConstTask = [](const CppTask::Task<void>& c_rTask){
+            c_rTask.Await();
+        };
+
+        task.RunAsync();
+        useConstTask(task);
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
+TEST(Task, AwaitResult_IsConstTask_Callable)
+{
+    try
+    {
+        CppTask::Task<int> task([](){
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            return 1;
+        });
+
+        int result = -1;
+
+        auto useConstTask = [&result](const CppTask::Task<int>& c_rTask){
+            result = c_rTask.AwaitResult();
+        };
+
+        task.RunAsync();
+        useConstTask(task);
+
+        ASSERT_EQ(result, 1);
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
+TEST(Task, GetResult_IsConstTask_Callable)
+{
+    try
+    {
+        CppTask::Task<int> task([](){
+            return 1;
+        });
+
+        int result = -1;
+
+        auto useConstTask = [&result](const CppTask::Task<int>& c_rTask){
+            result = c_rTask.GetResult();
+        };
+
+        task.Run();
+        useConstTask(task);
+
+        ASSERT_EQ(result, 1);
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
+TEST(Task, GetState_IsConstTask_Callable)
+{
+    try
+    {
+        CppTask::Task<int> task([](){
+            return 1;
+        });
+
+        auto initialState = CppTask::TaskState::RUNNING;
+        auto finalState = CppTask::TaskState::RUNNING;
+
+        auto useConstTask = [](const CppTask::Task<int>& c_rTask, CppTask::TaskState& rState){
+            rState = c_rTask.GetState();
+        };
+
+        useConstTask(task, initialState);
+        task.Run();
+        useConstTask(task, finalState);
+
+        ASSERT_EQ(initialState, CppTask::TaskState::WAITING);
+        ASSERT_EQ(finalState, CppTask::TaskState::FINISHED);
     }
     catch (const std::exception& e)
     {
