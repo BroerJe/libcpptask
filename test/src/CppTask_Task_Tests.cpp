@@ -690,6 +690,46 @@ TEST(Task, AwaitResult_Run_ReturnsLambdaClassResult)
     }
 }
 
+TEST(Task, AwaitResult_RunAsync_ReturnsLambdaDynamicContainerResult)
+{
+    try
+    {
+        CppTask::Task<std::vector<int>> task([](){
+            return std::vector { 32 };
+        });
+
+        task.RunAsync();
+        auto result = task.AwaitResult();
+
+        ASSERT_EQ(result.size(), 1);
+        ASSERT_EQ(result[0], 32);
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
+TEST(Task, AwaitResult_Run_ReturnsLambdaDynamicContainerResult)
+{
+    try
+    {
+        CppTask::Task<std::vector<int>> task([](){
+            return std::vector { 32 };
+        });
+
+        task.Run();
+        auto result = task.AwaitResult();
+
+        ASSERT_EQ(result.size(), 1);
+        ASSERT_EQ(result[0], 32);
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
 TEST(Task, AwaitResult_RunAsync_ReturnsLambdaStructResult)
 {
     try
@@ -900,6 +940,53 @@ TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaStructResult)
 
         ASSERT_EQ(firstResult.m_value, 32);
         ASSERT_EQ(secondResult.m_value, 32);
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
+TEST(Task, GetResult_CalledTwice_ReturnsSameLambdaDynamicContainerResult)
+{
+    try
+    {
+        CppTask::Task<std::vector<int>> task([](){
+            return std::vector { 32 };
+        });
+
+        task.RunAsync();
+        task.Await();
+        auto firstResult = task.GetResult();
+        auto secondResult = task.GetResult();
+
+        ASSERT_EQ(firstResult.size(), 1);
+        ASSERT_EQ(secondResult.size(), 1);
+        ASSERT_EQ(firstResult[0], 32);
+        ASSERT_EQ(secondResult[0], 32);
+    }
+    catch (const std::exception& e)
+    {
+        FAIL() << e.what();
+    }
+}
+
+TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaDynamicContainerResult)
+{
+    try
+    {
+        CppTask::Task<std::vector<int>> task([](){
+            return std::vector { 32 };
+        });
+
+        task.RunAsync();
+        auto firstResult = task.AwaitResult();
+        auto secondResult = task.AwaitResult();
+
+        ASSERT_EQ(firstResult.size(), 1);
+        ASSERT_EQ(secondResult.size(), 1);
+        ASSERT_EQ(firstResult[0], 32);
+        ASSERT_EQ(secondResult[0], 32);
     }
     catch (const std::exception& e)
     {

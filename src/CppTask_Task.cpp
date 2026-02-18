@@ -16,7 +16,6 @@
  */
 
 // STL
-#include <cstring>
 #include <mutex>
 #include <condition_variable>
 
@@ -41,7 +40,7 @@ struct TaskThread::Storage
 
     std::function<void(TaskThread& rTaskThread)> m_function;
     TaskState m_state;
-    std::shared_ptr<char[]> m_pResult;
+    std::any m_result;
 };
 
 //******************************************************************************
@@ -53,7 +52,6 @@ TaskThread::TaskThread(const std::function<void(TaskThread& rTaskThread)>& c_rFu
 {
     m_pStorage->m_function = c_rFunction;
     m_pStorage->m_state = TaskState::WAITING;
-    m_pStorage->m_pResult = nullptr;
 }
 
 //******************************************************************************
@@ -128,35 +126,24 @@ TaskThread::Await() const
 //******************************************************************************
 
 void
-TaskThread::SetResult(const void* c_pPtr, size_t size)
+TaskThread::SetResult(std::any result)
 {
-    if (!c_pPtr || size == 0)
-    {
-        throw Exception("Invalid parameters!");
-    }
-
     std::lock_guard<std::mutex> lockGuard(m_pStorage->m_mutex);
 
-    m_pStorage->m_pResult = std::shared_ptr<char[]>(new char[size]);
-    std::memcpy(m_pStorage->m_pResult.get(), c_pPtr, size);
+    m_pStorage->m_result = std::move(result);
 }
 
-void
-TaskThread::GetResult(void* pPtr, size_t size) const
+const std::any&
+TaskThread::GetResult() const
 {
-    if (!pPtr || size == 0)
-    {
-        throw Exception("Invalid parameters!");
-    }
-
     std::lock_guard<std::mutex> lockGuard(m_pStorage->m_mutex);
 
-    if (!m_pStorage->m_pResult)
+    if (!m_pStorage->m_result.has_value())
     {
         throw Exception("No result available to return!");
     }
-    
-    std::memcpy(pPtr, m_pStorage->m_pResult.get(), size);
+
+    return m_pStorage->m_result;
 }
 
 //******************************************************************************
@@ -167,6 +154,7 @@ TaskState
 TaskThread::GetState() const
 {
     std::lock_guard<std::mutex> lockGuard(m_pStorage->m_mutex);
+    
     return m_pStorage->m_state;
 }
 

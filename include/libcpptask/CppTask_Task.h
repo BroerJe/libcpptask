@@ -19,6 +19,7 @@
 #define libcpptask_CppTask_Task_h
 
 // STL
+#include <any>
 #include <functional>
 #include <memory>
 
@@ -116,21 +117,19 @@ private:
     /**
      *  @brief Set the result of a task. This function is thread-safe.
      *
-     *  @param c_pSrc The source to read the result from. The data is copied.
-     *  @param size The size available to write to.
+     *  @param result The result value to store.
      */
     void
-    SetResult(const void* c_pPtr, size_t size);
+    SetResult(std::any result);
 
     /**
      *  @brief Retrieve the result of a task. The same result will be returned
      *         for repeated calls. This function is thread-safe.
      *
-     *  @param pDst The destination to write the result to.
-     *  @param size The size available to write to.
+     *  @returns The stored result as std::any.
      */
-    void
-    GetResult(void* pPtr, size_t size) const;
+    const std::any&
+    GetResult() const;
 
     //**************************************************************************
     // MARK: Task State
@@ -207,7 +206,7 @@ public:
         else
         {
             auto result = c_rTaskFunction();
-            rTaskThread.SetResult(&result, sizeof(result));
+            rTaskThread.SetResult(std::move(result));
             rTaskThread.SetFinished();
         }
     }))
@@ -251,7 +250,7 @@ public:
             return pTask->GetResult();
         });
 
-        pTask->m_pTaskThread->SetResult(&c_Result, sizeof(c_Result));
+        pTask->m_pTaskThread->SetResult(c_Result);
         pTask->m_pTaskThread->SetFinished();
 
         return pTask;
@@ -305,12 +304,7 @@ public:
     {
         if constexpr (!std::is_same_v<T, void>)
         {
-            auto size = sizeof(T);
-            char pDst[size];
-
-            m_pTaskThread->GetResult(pDst, size);
-
-            return *(T*)pDst;
+            return std::any_cast<T>(m_pTaskThread->GetResult());
         }
     }
 
