@@ -69,1002 +69,687 @@ struct TStruct
 
 TEST(Task, Construct_FunctionWithReturnValue_Success)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 }
 
 TEST(Task, Construct_FunctionWithoutReturnValue_Success)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            int x = 1;
-        });
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    CppTask::Task<void> task([](){
+        int x = 1;
+    });
 }
 
 TEST(Task, Copy_FunctionWithReturnValue_Success)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 
-        {
-            CppTask::Task<int> secondTask = task;
-        }
-    }
-    catch (const std::exception& e)
     {
-        FAIL() << e.what();
+        CppTask::Task<int> secondTask = task;
     }
 }
 
 TEST(Task, Copy_FunctionWithoutReturnValue_Success)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            int x = 1;
-        });
+    CppTask::Task<void> task([](){
+        int x = 1;
+    });
 
-        {
-            CppTask::Task<void> secondTask = task;
-        }
-    }
-    catch (const std::exception& e)
     {
-        FAIL() << e.what();
+        CppTask::Task<void> secondTask = task;
     }
 }
 
 TEST(Task, Destroy_RunningFunctionWithReturnValue_Success)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        return 1;
+    });
 
-        {
-            CppTask::Task<int> secondTask = task;
-            secondTask.RunAsync();
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        }
-    }
-    catch (const std::exception& e)
     {
-        FAIL() << e.what();
+        CppTask::Task<int> secondTask = task;
+        secondTask.RunAsync();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
 TEST(Task, Destroy_RunningFunctionWithoutReturnValue_Success)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            int x = 1;
-        });
+    CppTask::Task<void> task([](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        int x = 1;
+    });
 
-        {
-            CppTask::Task<void> secondTask = task;
-            secondTask.RunAsync();
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        }
-    }
-    catch (const std::exception& e)
     {
-        FAIL() << e.what();
+        CppTask::Task<void> secondTask = task;
+        secondTask.RunAsync();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
 TEST(Task, CompletedTask_TaskWithReturnValue_ReturnsCompletedTaskWithValue)
 {
-    try
-    {
-        auto pTask = CppTask::Task<int>::CompletedTask(32);
+    auto pTask = CppTask::Task<int>::CompletedTask(32);
 
-        ASSERT_NE(pTask, nullptr);
-        ASSERT_EQ(pTask->GetState(), CppTask::TaskState::FINISHED);
-        ASSERT_EQ(pTask->GetResult(), 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_NE(pTask, nullptr);
+    ASSERT_EQ(pTask->GetState(), CppTask::TaskState::FINISHED);
+    ASSERT_EQ(pTask->GetResult(), 32);
 }
 
 TEST(Task, CompletedTask_TaskWithoutReturnValue_ReturnsCompletedTask)
 {
-    try
-    {
-        auto pTask = CppTask::Task<void>::CompletedTask();
+    auto pTask = CppTask::Task<void>::CompletedTask();
 
-        ASSERT_NE(pTask, nullptr);
-        ASSERT_EQ(pTask->GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_NE(pTask, nullptr);
+    ASSERT_EQ(pTask->GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, Run_FunctionWithReturnValue_SucceedsWithCorrectStates)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
-        
-        task.Run();
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    task.Run();
+
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, Run_FunctionWithoutReturnValue_SucceedsWithCorrectStates)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            int x = 1;
-        });
+    CppTask::Task<void> task([](){
+        int x = 1;
+    });
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
-        
-        task.Run();
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    task.Run();
+
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, Run_RerunFunctionWithReturnValue_SucceedsAndReturnsInstantly)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 
-        task.Run();
+    task.Run();
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-        ASSERT_ANY_THROW(task.Run());
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
+    ASSERT_ANY_THROW(task.Run());
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, Run_RerunFunctionWithoutReturnValue_SucceedsAndReturnsInstantly)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            int x = 1;
-        });
+    CppTask::Task<void> task([](){
+        int x = 1;
+    });
 
-        task.Run();
+    task.Run();
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-        ASSERT_ANY_THROW(task.Run());
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
+    ASSERT_ANY_THROW(task.Run());
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, RunAsync_FunctionWithReturnValue_SucceedsWithCorrectStates)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        return 1;
+    });
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
-        
-        task.RunAsync();
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::RUNNING);
-        
-        task.AwaitResult();
+    task.RunAsync();
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::RUNNING);
+
+    task.AwaitResult();
+
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, RunAsync_FunctionWithoutReturnValue_SucceedsWithCorrectStates)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        });
+    CppTask::Task<void> task([](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    });
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
-        
-        task.RunAsync();
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::WAITING);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::RUNNING);
+    task.RunAsync();
 
-        task.Await();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::RUNNING);
+
+    task.Await();
+
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, RunAsync_RunFromTwoSeparateThreads_OnlyRunsTaskOnce)
 {
-    try
+    std::mutex mutex;
+    std::condition_variable condition;
+    std::atomic<size_t> runCount(0);
+
+    CppTask::Task<void> task([&](){
+        runCount += 1;
+    });
+
+    auto threadFunction = [&](){
+        {
+            std::unique_lock<std::mutex> uniqueLock(mutex);
+            condition.wait(uniqueLock);
+        }
+
+        try
+        {
+            task.RunAsync();
+        }
+        catch (...)
+        {
+            // Might throw here if the task was prevented to enque directly
+            // Otherwise the thread pool will catch the task and skip it
+            //
+            // Either way, exception or no exception is fine
+        }
+    };
+
+    std::thread firstThread(threadFunction);
+    std::thread secondThread(threadFunction);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
     {
-        std::mutex mutex;
-        std::condition_variable condition;
-        std::atomic<size_t> runCount(0);
-
-        CppTask::Task<void> task([&](){
-            runCount += 1;
-        });
-
-        auto threadFunction = [&](){
-            {
-                std::unique_lock<std::mutex> uniqueLock(mutex);
-                condition.wait(uniqueLock);
-            }
-
-            try
-            {
-                task.RunAsync();
-            }
-            catch (...)
-            {
-                // Might throw here if the task was prevented to enque directly
-                // Otherwise the thread pool will catch the task and skip it
-                //
-                // Either way, exception or no exception is fine
-            }
-        };
-
-        std::thread firstThread(threadFunction);
-        std::thread secondThread(threadFunction);
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        
-        {
-            std::lock_guard<std::mutex> lockGuard(mutex);
-            condition.notify_all();
-        }
-        
-        if (firstThread.joinable())
-        {
-            firstThread.join();
-        }
-
-        if (secondThread.joinable())
-        {
-            secondThread.join();
-        }
-
-        task.Await();
-
-        ASSERT_EQ(runCount, 1);
+        std::lock_guard<std::mutex> lockGuard(mutex);
+        condition.notify_all();
     }
-    catch (const std::exception& e)
+
+    if (firstThread.joinable())
     {
-        FAIL() << e.what();
+        firstThread.join();
     }
+
+    if (secondThread.joinable())
+    {
+        secondThread.join();
+    }
+
+    task.Await();
+
+    ASSERT_EQ(runCount, 1);
 }
 
 TEST(Task, RunAsync_RerunFunctionWithReturnValue_SucceedsWithCorrectStates)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 
-        task.Run();
-        
-        ASSERT_EQ(task.GetResult(), 1);
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-        ASSERT_ANY_THROW(task.RunAsync());
-        ASSERT_EQ(task.AwaitResult(), 1);
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    task.Run();
+
+    ASSERT_EQ(task.GetResult(), 1);
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
+    ASSERT_ANY_THROW(task.RunAsync());
+    ASSERT_EQ(task.AwaitResult(), 1);
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, RunAsync_RerunFunctionWithoutReturnValue_SucceedsWithCorrectStates)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            int x = 1;
-        });
+    CppTask::Task<void> task([](){
+        int x = 1;
+    });
 
-        task.Run();
+    task.Run();
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-        
-        ASSERT_ANY_THROW(task.RunAsync());
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 
-        task.Await();
+    ASSERT_ANY_THROW(task.RunAsync());
 
-        ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    task.Await();
+
+    ASSERT_EQ(task.GetState(), CppTask::TaskState::FINISHED);
 }
 
 TEST(Task, GetResult_Run_ReturnsLambdaValueResult)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 32;
-        });
+    CppTask::Task<int> task([](){
+        return 32;
+    });
 
-        task.Run();
-        auto result = task.GetResult();
+    task.Run();
+    auto result = task.GetResult();
 
-        ASSERT_EQ(result, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result, 32);
 }
 
 TEST(Task, GetResult_RunAsync_ReturnsLambdaValueResult)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 32;
-        });
+    CppTask::Task<int> task([](){
+        return 32;
+    });
 
-        task.RunAsync();
-        task.Await();
-        auto result = task.GetResult();
+    task.RunAsync();
+    task.Await();
+    auto result = task.GetResult();
 
-        ASSERT_EQ(result, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result, 32);
 }
 
 TEST(Task, GetResult_Run_ReturnsLambdaClassResult)
 {
-    try
-    {
-        CppTask::Task<TClass> task([](){
-            return TClass(32);
-        });
+    CppTask::Task<TClass> task([](){
+        return TClass(32);
+    });
 
-        task.Run();
-        auto result = task.GetResult();
+    task.Run();
+    auto result = task.GetResult();
 
-        ASSERT_EQ(result.GetValue(), 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.GetValue(), 32);
 }
 
 TEST(Task, GetResult_RunAsync_ReturnsLambdaClassResult)
 {
-    try
-    {
-        CppTask::Task<TClass> task([](){
-            return TClass(32);
-        });
+    CppTask::Task<TClass> task([](){
+        return TClass(32);
+    });
 
-        task.RunAsync();
-        task.Await();
-        auto result = task.GetResult();
+    task.RunAsync();
+    task.Await();
+    auto result = task.GetResult();
 
-        ASSERT_EQ(result.GetValue(), 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.GetValue(), 32);
 }
 
 TEST(Task, GetResult_Run_ReturnsLambdaStructResult)
 {
-    try
-    {
-        CppTask::Task<TStruct> task([](){
-            return TStruct { 32 };
-        });
+    CppTask::Task<TStruct> task([](){
+        return TStruct { 32 };
+    });
 
-        task.Run();
-        auto result = task.GetResult();
+    task.Run();
+    auto result = task.GetResult();
 
-        ASSERT_EQ(result.m_value, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.m_value, 32);
 }
 
 TEST(Task, GetResult_RunAsync_ReturnsLambdaStructResult)
 {
-    try
-    {
-        CppTask::Task<TStruct> task([](){
-            return TStruct { 32 };
-        });
+    CppTask::Task<TStruct> task([](){
+        return TStruct { 32 };
+    });
 
-        task.RunAsync();
-        task.Await();
-        auto result = task.GetResult();
+    task.RunAsync();
+    task.Await();
+    auto result = task.GetResult();
 
-        ASSERT_EQ(result.m_value, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.m_value, 32);
 }
 
 TEST(Task, GetResult_Run_ReturnsLambdaPointerResult)
 {
-    try
+    CppTask::Task<int*> task([](){
+        return new int(32);
+    });
+
+    task.Run();
+    auto pResult = task.GetResult();
+
+    EXPECT_NE(pResult, nullptr);
+
+    if (pResult)
     {
-        CppTask::Task<int*> task([](){
-            return new int(32);
-        });
-
-        task.Run();
-        auto pResult = task.GetResult();
-
-        EXPECT_NE(pResult, nullptr);
-
-        if (pResult)
-        {
-            EXPECT_EQ(*pResult, 32);
-            delete pResult;
-        }
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
+        EXPECT_EQ(*pResult, 32);
+        delete pResult;
     }
 }
 
 TEST(Task, GetResult_RunAsync_ReturnsLambdaPointerResult)
 {
-    try
+    CppTask::Task<int*> task([](){
+        return new int(32);
+    });
+
+    task.RunAsync();
+    task.Await();
+    auto pResult = task.GetResult();
+
+    EXPECT_NE(pResult, nullptr);
+
+    if (pResult)
     {
-        CppTask::Task<int*> task([](){
-            return new int(32);
-        });
-
-        task.RunAsync();
-        task.Await();
-        auto pResult = task.GetResult();
-
-        EXPECT_NE(pResult, nullptr);
-
-        if (pResult)
-        {
-            EXPECT_EQ(*pResult, 32);
-            delete pResult;
-        }
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
+        EXPECT_EQ(*pResult, 32);
+        delete pResult;
     }
 }
 
 TEST(Task, AwaitResult_RunAsync_ReturnsLambdaValueResult)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 32;
-        });
+    CppTask::Task<int> task([](){
+        return 32;
+    });
 
-        task.RunAsync();
-        auto result = task.AwaitResult();
+    task.RunAsync();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result, 32);
 }
 
 TEST(Task, AwaitResult_Run_ReturnsLambdaValueResult)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 32;
-        });
+    CppTask::Task<int> task([](){
+        return 32;
+    });
 
-        task.Run();
-        auto result = task.AwaitResult();
+    task.Run();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result, 32);
 }
 
 TEST(Task, AwaitResult_RunAsync_ReturnsLambdaClassResult)
 {
-    try
-    {
-        CppTask::Task<TClass> task([](){
-            return TClass(32);
-        });
+    CppTask::Task<TClass> task([](){
+        return TClass(32);
+    });
 
-        task.RunAsync();
-        auto result = task.AwaitResult();
+    task.RunAsync();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result.GetValue(), 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.GetValue(), 32);
 }
 
 TEST(Task, AwaitResult_Run_ReturnsLambdaClassResult)
 {
-    try
-    {
-        CppTask::Task<TClass> task([](){
-            return TClass(32);
-        });
+    CppTask::Task<TClass> task([](){
+        return TClass(32);
+    });
 
-        task.Run();
-        auto result = task.AwaitResult();
+    task.Run();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result.GetValue(), 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.GetValue(), 32);
 }
 
 TEST(Task, AwaitResult_RunAsync_ReturnsLambdaDynamicContainerResult)
 {
-    try
-    {
-        CppTask::Task<std::vector<int>> task([](){
-            return std::vector { 32 };
-        });
+    CppTask::Task<std::vector<int>> task([](){
+        return std::vector { 32 };
+    });
 
-        task.RunAsync();
-        auto result = task.AwaitResult();
+    task.RunAsync();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result.size(), 1);
-        ASSERT_EQ(result[0], 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result[0], 32);
 }
 
 TEST(Task, AwaitResult_Run_ReturnsLambdaDynamicContainerResult)
 {
-    try
-    {
-        CppTask::Task<std::vector<int>> task([](){
-            return std::vector { 32 };
-        });
+    CppTask::Task<std::vector<int>> task([](){
+        return std::vector { 32 };
+    });
 
-        task.Run();
-        auto result = task.AwaitResult();
+    task.Run();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result.size(), 1);
-        ASSERT_EQ(result[0], 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result[0], 32);
 }
 
 TEST(Task, AwaitResult_RunAsync_ReturnsLambdaStructResult)
 {
-    try
-    {
-        CppTask::Task<TStruct> task([](){
-            return TStruct { 32 };
-        });
+    CppTask::Task<TStruct> task([](){
+        return TStruct { 32 };
+    });
 
-        task.RunAsync();
-        auto result = task.AwaitResult();
+    task.RunAsync();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result.m_value, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.m_value, 32);
 }
 
 TEST(Task, AwaitResult_Run_ReturnsLambdaStructResult)
 {
-    try
-    {
-        CppTask::Task<TStruct> task([](){
-            return TStruct { 32 };
-        });
+    CppTask::Task<TStruct> task([](){
+        return TStruct { 32 };
+    });
 
-        task.Run();
-        auto result = task.AwaitResult();
+    task.Run();
+    auto result = task.AwaitResult();
 
-        ASSERT_EQ(result.m_value, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result.m_value, 32);
 }
 
 TEST(Task, AwaitResult_RunAsync_ReturnsLambdaPointerResult)
 {
-    try
+    CppTask::Task<int*> task([](){
+        return new int(32);
+    });
+
+    task.RunAsync();
+    auto pResult = task.AwaitResult();
+
+    EXPECT_NE(pResult, nullptr);
+
+    if (pResult)
     {
-        CppTask::Task<int*> task([](){
-            return new int(32);
-        });
-
-        task.RunAsync();
-        auto pResult = task.AwaitResult();
-
-        EXPECT_NE(pResult, nullptr);
-
-        if (pResult)
-        {
-            EXPECT_EQ(*pResult, 32);
-            delete pResult;
-        }
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
+        EXPECT_EQ(*pResult, 32);
+        delete pResult;
     }
 }
 
 TEST(Task, AwaitResult_Run_ReturnsLambdaPointerResult)
 {
-    try
+    CppTask::Task<int*> task([](){
+        return new int(32);
+    });
+
+    task.Run();
+    auto pResult = task.AwaitResult();
+
+    EXPECT_NE(pResult, nullptr);
+
+    if (pResult)
     {
-        CppTask::Task<int*> task([](){
-            return new int(32);
-        });
-
-        task.Run();
-        auto pResult = task.AwaitResult();
-
-        EXPECT_NE(pResult, nullptr);
-
-        if (pResult)
-        {
-            EXPECT_EQ(*pResult, 32);
-            delete pResult;
-        }
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
+        EXPECT_EQ(*pResult, 32);
+        delete pResult;
     }
 }
 
 TEST(Task, GetResult_CalledTwice_ReturnsSameLambdaValueResult)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 32;
-        });
+    CppTask::Task<int> task([](){
+        return 32;
+    });
 
-        task.RunAsync();
-        task.Await();
-        auto firstResult = task.GetResult();
-        auto secondResult = task.GetResult();
+    task.RunAsync();
+    task.Await();
+    auto firstResult = task.GetResult();
+    auto secondResult = task.GetResult();
 
-        ASSERT_EQ(firstResult, 32);
-        ASSERT_EQ(secondResult, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult, 32);
+    ASSERT_EQ(secondResult, 32);
 }
 
 TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaValueResult)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 32;
-        });
+    CppTask::Task<int> task([](){
+        return 32;
+    });
 
-        task.RunAsync();
-        auto firstResult = task.AwaitResult();
-        auto secondResult = task.AwaitResult();
+    task.RunAsync();
+    auto firstResult = task.AwaitResult();
+    auto secondResult = task.AwaitResult();
 
-        ASSERT_EQ(firstResult, 32);
-        ASSERT_EQ(secondResult, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult, 32);
+    ASSERT_EQ(secondResult, 32);
 }
 
 TEST(Task, GetResult_CalledTwice_ReturnsSameLambdaClassResult)
 {
-    try
-    {
-        CppTask::Task<TClass> task([](){
-            return TClass(32);
-        });
+    CppTask::Task<TClass> task([](){
+        return TClass(32);
+    });
 
-        task.RunAsync();
-        task.Await();
-        auto firstResult = task.GetResult();
-        auto secondResult = task.GetResult();
+    task.RunAsync();
+    task.Await();
+    auto firstResult = task.GetResult();
+    auto secondResult = task.GetResult();
 
-        ASSERT_EQ(firstResult.GetValue(), 32);
-        ASSERT_EQ(secondResult.GetValue(), 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult.GetValue(), 32);
+    ASSERT_EQ(secondResult.GetValue(), 32);
 }
 
 TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaClassResult)
 {
-    try
-    {
-        CppTask::Task<TClass> task([](){
-            return TClass(32);
-        });
+    CppTask::Task<TClass> task([](){
+        return TClass(32);
+    });
 
-        task.RunAsync();
-        auto firstResult = task.AwaitResult();
-        auto secondResult = task.AwaitResult();
+    task.RunAsync();
+    auto firstResult = task.AwaitResult();
+    auto secondResult = task.AwaitResult();
 
-        ASSERT_EQ(firstResult.GetValue(), 32);
-        ASSERT_EQ(secondResult.GetValue(), 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult.GetValue(), 32);
+    ASSERT_EQ(secondResult.GetValue(), 32);
 }
 
 TEST(Task, GetResult_CalledTwice_ReturnsSameLambdaStructResult)
 {
-    try
-    {
-        CppTask::Task<TStruct> task([](){
-            return TStruct { 32 };
-        });
+    CppTask::Task<TStruct> task([](){
+        return TStruct { 32 };
+    });
 
-        task.RunAsync();
-        task.Await();
-        auto firstResult = task.GetResult();
-        auto secondResult = task.GetResult();
+    task.RunAsync();
+    task.Await();
+    auto firstResult = task.GetResult();
+    auto secondResult = task.GetResult();
 
-        ASSERT_EQ(firstResult.m_value, 32);
-        ASSERT_EQ(secondResult.m_value, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult.m_value, 32);
+    ASSERT_EQ(secondResult.m_value, 32);
 }
 
 TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaStructResult)
 {
-    try
-    {
-        CppTask::Task<TStruct> task([](){
-            return TStruct { 32 };
-        });
+    CppTask::Task<TStruct> task([](){
+        return TStruct { 32 };
+    });
 
-        task.RunAsync();
-        auto firstResult = task.AwaitResult();
-        auto secondResult = task.AwaitResult();
+    task.RunAsync();
+    auto firstResult = task.AwaitResult();
+    auto secondResult = task.AwaitResult();
 
-        ASSERT_EQ(firstResult.m_value, 32);
-        ASSERT_EQ(secondResult.m_value, 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult.m_value, 32);
+    ASSERT_EQ(secondResult.m_value, 32);
 }
 
 TEST(Task, GetResult_CalledTwice_ReturnsSameLambdaDynamicContainerResult)
 {
-    try
-    {
-        CppTask::Task<std::vector<int>> task([](){
-            return std::vector { 32 };
-        });
+    CppTask::Task<std::vector<int>> task([](){
+        return std::vector { 32 };
+    });
 
-        task.RunAsync();
-        task.Await();
-        auto firstResult = task.GetResult();
-        auto secondResult = task.GetResult();
+    task.RunAsync();
+    task.Await();
+    auto firstResult = task.GetResult();
+    auto secondResult = task.GetResult();
 
-        ASSERT_EQ(firstResult.size(), 1);
-        ASSERT_EQ(secondResult.size(), 1);
-        ASSERT_EQ(firstResult[0], 32);
-        ASSERT_EQ(secondResult[0], 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult.size(), 1);
+    ASSERT_EQ(secondResult.size(), 1);
+    ASSERT_EQ(firstResult[0], 32);
+    ASSERT_EQ(secondResult[0], 32);
 }
 
 TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaDynamicContainerResult)
 {
-    try
-    {
-        CppTask::Task<std::vector<int>> task([](){
-            return std::vector { 32 };
-        });
+    CppTask::Task<std::vector<int>> task([](){
+        return std::vector { 32 };
+    });
 
-        task.RunAsync();
-        auto firstResult = task.AwaitResult();
-        auto secondResult = task.AwaitResult();
+    task.RunAsync();
+    auto firstResult = task.AwaitResult();
+    auto secondResult = task.AwaitResult();
 
-        ASSERT_EQ(firstResult.size(), 1);
-        ASSERT_EQ(secondResult.size(), 1);
-        ASSERT_EQ(firstResult[0], 32);
-        ASSERT_EQ(secondResult[0], 32);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(firstResult.size(), 1);
+    ASSERT_EQ(secondResult.size(), 1);
+    ASSERT_EQ(firstResult[0], 32);
+    ASSERT_EQ(secondResult[0], 32);
 }
 
 TEST(Task, GetResult_CalledTwice_ReturnsSameLambdaPointerResult)
 {
-    try
+    CppTask::Task<int*> task([](){
+        return new int(32);
+    });
+
+    task.RunAsync();
+    task.Await();
+    auto pFirstResult = task.GetResult();
+    auto pSecondResult = task.GetResult();
+
+    EXPECT_NE(pFirstResult, nullptr);
+    EXPECT_NE(pSecondResult, nullptr);
+
+    EXPECT_EQ(pFirstResult, pSecondResult);
+
+    if (pFirstResult)
     {
-        CppTask::Task<int*> task([](){
-            return new int(32);
-        });
-
-        task.RunAsync();
-        task.Await();
-        auto pFirstResult = task.GetResult();
-        auto pSecondResult = task.GetResult();
-
-        EXPECT_NE(pFirstResult, nullptr);
-        EXPECT_NE(pSecondResult, nullptr);
-
-        EXPECT_EQ(pFirstResult, pSecondResult);
-
-        if (pFirstResult)
-        {
-            EXPECT_EQ(*pFirstResult, 32);
-        }
-
-        if (pSecondResult)
-        {
-            EXPECT_EQ(*pSecondResult, 32);
-        }
-
-        delete pFirstResult;
-        // pFirstResult is pSecondResult!
+        EXPECT_EQ(*pFirstResult, 32);
     }
-    catch (const std::exception& e)
+
+    if (pSecondResult)
     {
-        FAIL() << e.what();
+        EXPECT_EQ(*pSecondResult, 32);
     }
+
+    delete pFirstResult;
+    // pFirstResult is pSecondResult!
 }
 
 TEST(Task, AwaitResult_CalledTwice_ReturnsSameLambdaPointerResult)
 {
-    try
+    CppTask::Task<int*> task([](){
+        return new int(32);
+    });
+
+    task.RunAsync();
+    auto pFirstResult = task.AwaitResult();
+    auto pSecondResult = task.AwaitResult();
+
+    EXPECT_NE(pFirstResult, nullptr);
+    EXPECT_NE(pSecondResult, nullptr);
+
+    EXPECT_EQ(pFirstResult, pSecondResult);
+
+    if (pFirstResult)
     {
-        CppTask::Task<int*> task([](){
-            return new int(32);
-        });
-
-        task.RunAsync();
-        auto pFirstResult = task.AwaitResult();
-        auto pSecondResult = task.AwaitResult();
-
-        EXPECT_NE(pFirstResult, nullptr);
-        EXPECT_NE(pSecondResult, nullptr);
-
-        EXPECT_EQ(pFirstResult, pSecondResult);
-
-        if (pFirstResult)
-        {
-            EXPECT_EQ(*pFirstResult, 32);
-        }
-
-        if (pSecondResult)
-        {
-            EXPECT_EQ(*pSecondResult, 32);
-        }
-
-        delete pFirstResult;
-        // pFirstResult is pSecondResult!
+        EXPECT_EQ(*pFirstResult, 32);
     }
-    catch (const std::exception& e)
+
+    if (pSecondResult)
     {
-        FAIL() << e.what();
+        EXPECT_EQ(*pSecondResult, 32);
     }
+
+    delete pFirstResult;
+    // pFirstResult is pSecondResult!
 }
 
 TEST(Task, GetResult_NotRunFunctionWithResult_Throws)
@@ -1072,125 +757,90 @@ TEST(Task, GetResult_NotRunFunctionWithResult_Throws)
     // There is no reason to test the behaviour of void lambdas,
     // since those will not attempt to read the task thread result
 
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 
-        ASSERT_ANY_THROW(task.GetResult());
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_ANY_THROW(task.GetResult());
 }
 
 TEST(Task, Await_IsConstTask_Callable)
 {
-    try
-    {
-        CppTask::Task<void> task([](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
-        });
+    CppTask::Task<void> task([](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    });
 
-        auto useConstTask = [](const CppTask::Task<void>& c_rTask){
-            c_rTask.Await();
-        };
+    auto useConstTask = [](const CppTask::Task<void>& c_rTask){
+        c_rTask.Await();
+    };
 
-        task.RunAsync();
-        useConstTask(task);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    task.RunAsync();
+    useConstTask(task);
 }
 
 TEST(Task, AwaitResult_IsConstTask_Callable)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        return 1;
+    });
 
-        int result = -1;
+    int result = -1;
 
-        auto useConstTask = [&result](const CppTask::Task<int>& c_rTask){
-            result = c_rTask.AwaitResult();
-        };
+    auto useConstTask = [&result](const CppTask::Task<int>& c_rTask){
+        result = c_rTask.AwaitResult();
+    };
 
-        task.RunAsync();
-        useConstTask(task);
+    task.RunAsync();
+    useConstTask(task);
 
-        ASSERT_EQ(result, 1);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result, 1);
 }
 
 TEST(Task, GetResult_IsConstTask_Callable)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 
-        int result = -1;
+    int result = -1;
 
-        auto useConstTask = [&result](const CppTask::Task<int>& c_rTask){
-            result = c_rTask.GetResult();
-        };
+    auto useConstTask = [&result](const CppTask::Task<int>& c_rTask){
+        result = c_rTask.GetResult();
+    };
 
-        task.Run();
-        useConstTask(task);
+    task.Run();
+    useConstTask(task);
 
-        ASSERT_EQ(result, 1);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(result, 1);
 }
 
 TEST(Task, GetState_IsConstTask_Callable)
 {
-    try
-    {
-        CppTask::Task<int> task([](){
-            return 1;
-        });
+    CppTask::Task<int> task([](){
+        return 1;
+    });
 
-        auto initialState = CppTask::TaskState::RUNNING;
-        auto finalState = CppTask::TaskState::RUNNING;
+    auto initialState = CppTask::TaskState::RUNNING;
+    auto finalState = CppTask::TaskState::RUNNING;
 
-        auto useConstTask = [](const CppTask::Task<int>& c_rTask, CppTask::TaskState& rState){
-            rState = c_rTask.GetState();
-        };
+    auto useConstTask = [](const CppTask::Task<int>& c_rTask, CppTask::TaskState& rState){
+        rState = c_rTask.GetState();
+    };
 
-        useConstTask(task, initialState);
-        task.Run();
-        useConstTask(task, finalState);
+    useConstTask(task, initialState);
+    task.Run();
+    useConstTask(task, finalState);
 
-        ASSERT_EQ(initialState, CppTask::TaskState::WAITING);
-        ASSERT_EQ(finalState, CppTask::TaskState::FINISHED);
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_EQ(initialState, CppTask::TaskState::WAITING);
+    ASSERT_EQ(finalState, CppTask::TaskState::FINISHED);
 }
 
 //******************************************************************************
 // MARK: Main
 //******************************************************************************
 
-int 
+int
 main(int argc, char* argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

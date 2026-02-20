@@ -30,35 +30,21 @@
 
 TEST(ThreadPool, Singleton_ReturnsInstance_Success)
 {
-    try
-    {
-        auto& rSingleton = CppTask::ThreadPool::Singleton();
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    auto& rSingleton = CppTask::ThreadPool::Singleton();
 }
 
 TEST(ThreadPool, Enqueue_InvalidTaskThread_Throws)
 {
-    try
-    {
-        auto& rSingleton = CppTask::ThreadPool::Singleton();
+    auto& rSingleton = CppTask::ThreadPool::Singleton();
 
-        ASSERT_ANY_THROW(rSingleton.Enqueue(nullptr));
-    }
-    catch (const std::exception& e)
-    {
-        FAIL() << e.what();
-    }
+    ASSERT_ANY_THROW(rSingleton.Enqueue(nullptr));
 }
 
 //******************************************************************************
 // MARK: Main
 //******************************************************************************
 
-int 
+int
 main(int argc, char* argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
